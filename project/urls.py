@@ -8,4 +8,5 @@ urlpatterns = [
     path('', index),
     path('health', health),
     path('admin/', admin.site.urls),
+    path('', include('signup.urls')),
 ]
