@@ -1,3 +1,85 @@
 {% extends 'base.html' %} {% block content %}
-<!-- TODO Implement the Registration page -->
+<!-- Form -->
+<form class="text-center border border-light p-5 forms">
+  <p class="h4 mb-4">Join oBey</p>
+
+  <!-- Username -->
+  <input
+    type="text"
+    class="form-control"
+    name="registerId"
+    pattern="^[a-zA-Z0-9_@+.-]*"
+    placeholder="Username"
+  />
+  <small class="form-text text-muted mb-4">
+    Usernames may contain alphanumeric, _, @, +, . and -
+  </small>
+
+  <!-- Password -->
+  <input
+    type="password"
+    class="form-control"
+    name="registerPw"
+    placeholder="Password"
+    minlength="8"
+  />
+  <small class="form-text text-muted mb-4"> At least 8 characters </small>
+
+  <!-- E-mail -->
+  <input
+    type="email"
+    class="form-control mb-4"
+    name="registerEmail"
+    placeholder="Email"
+  />
+
+  <small id="registrationError" class="form-text mb-4 text-danger"></small>
+
+  <!-- Sign up button -->
+  <button
+    data-test="signUp"
+    class="btn btn-info my-4 btn-block"
+    type="button"
+    onclick="handleRegister();"
+  >
+    Sign up
+  </button>
+
+  <!-- TODO Add login page and redirect the Users there -->
+  <p>Already a member? <a href="#">Login</a></p>
+</form>
+
+<script>
+  // Collect data from inputs
+  // TODO - Wire this function to the backend
+  // I.e. have it add a User - at the moment does only
+  // client-side validation of the inputs.
+  function handleRegister() {
+    const $id = $.find('[name="registerId"]')[0];
+    const $pw = $.find('[name="registerPw"]')[0];
+    const $email = $.find('[name="registerEmail"]')[0];
+
+    // Check validity of data
+    const id = $id.validity.valid ? $id.value.toLowerCase() : null;
+    const pw = $pw.validity.valid ? $pw.value : null;
+    const email = $email.validity.valid ? $email.value.toLowerCase() : null;
+
+    // Display an error message if data is not valid
+    !id && $("#registrationError").html("Invalid username.");
+    !pw && $("#registrationError").html("Invalid password.");
+    !email && $("#registrationError").html("Invalid email.");
+  }
+
+  // Reset error message on input change
+  $('[name="registerId"]').on("keydown", () => {
+    $("#registrationError").html("");
+  });
+
+  $('[name="registerEmail"]').on("keydown", () => {
+    $("#registrationError").html("");
+  });
+
+  // Use window object to have universal scope for the functions
+  window.handleRegister = handleRegister;
+</script>
 {% endblock %}
