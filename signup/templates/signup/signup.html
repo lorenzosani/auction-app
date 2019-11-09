@@ -51,6 +51,40 @@
   <p>Already a member? <a href="#">Login</a></p>
 </form>
 
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="registrationSuccess"
+  tabindex="-1"
+  role="dialog"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Registration was succesful!</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- TODO Redirect to login page once we have one -->
+        Click <a href="#">here</a> to login
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   // Collect data from inputs
   function handleRegister() {
@@ -63,10 +97,24 @@
     const pw = $pw.validity.valid ? $pw.value : null;
     const email = $email.validity.valid ? $email.value.toLowerCase() : null;
 
-    // Display an error message if data is not valid
-    !id && $("#registrationError").html("Invalid username.");
-    !pw && $("#registrationError").html("Invalid password.");
-    !email && $("#registrationError").html("Invalid email.");
+    // Id and pw are required fields. Don't send the POST request
+    // if any of these are not valid.
+    if (!id) {
+      $("#registrationError").html("Invalid username.");
+      return;
+    }
+    if (!pw) {
+      $("#registrationError").html("Invalid password.");
+      return;
+    }
+
+    // Validate the email only if users typed something in it.
+    if ($email.value.length > 0) {
+      if (!email) {
+        $("#registrationError").html("Invalid email.");
+        return;
+      }
+    }
 
     $.ajax({
       url: "{% url 'registration' %}",
@@ -76,11 +124,12 @@
         xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
       },
       success: ({ username }) => {
-        // TODO - Notify the users on the outcome of the signup
+        clearForm([$id, $pw, $email]);
+        // Open modal to tell users the registration was succesful
+        $("#registrationSuccess").modal();
       },
       error: error => {
-        // TODO: Improve quality of error shown to the users
-        $("#registrationError").text(`${JSON.stringify(error)}`);
+        $("#registrationError").text("Username or Email already in use.");
       }
     });
   }
@@ -93,6 +142,14 @@
   $('[name="email"]').on("keydown", () => {
     $("#registrationError").html("");
   });
+
+  function clearForm($els) {
+    for (let $el of $els) {
+      $el.value = "";
+    }
+    // Also reset error.
+    $("#registrationError").text("");
+  }
 
   // Use window object to have universal scope for the functions
   window.handleRegister = handleRegister;
