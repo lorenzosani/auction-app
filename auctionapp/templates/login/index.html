@@ -1,0 +1,84 @@
+{% extends 'base.html' %} {% block content %}
+<!-- Default form login -->
+<form class="text-center border border-light p-5 forms">
+  <p class="h4 mb-4">Welcome back to oBey</p>
+
+  <!-- Email -->
+  <input
+    type="text"
+    class="form-control mb-4"
+    name="loginId"
+    placeholder="Username"
+  />
+
+  <!-- Password -->
+  <input
+    type="password"
+    class="form-control mb-4"
+    name="loginPw"
+    placeholder="Password"
+    minlength="8"
+  />
+
+  <div class="d-flex justify-content-around">
+    <!-- TODO Implement reset via email feature to get the extra marks -->
+    <div>
+      <!-- Forgot password -->
+      <a href="">Forgot password?</a>
+    </div>
+  </div>
+  <small id="loginError" class="form-text mb-4 text-danger"></small>
+
+  <!-- Sign in button -->
+  <button
+    data-test="login"
+    class="btn btn-info btn-block my-4"
+    type="button"
+    onclick="handleLogin();"
+  >
+    Sign in
+  </button>
+
+  <!-- Register -->
+  <p>Not a member? <a href="{% url 'sign up page' %}">Register</a></p>
+</form>
+
+<script>
+  function handleLogin() {
+    const $id = $.find('[name="loginId"]')[0];
+    const $pw = $.find('[name="loginPw"]')[0];
+    const id = $id.validity.valid ? $id.value.toLowerCase() : null;
+    const pw = $pw.validity.valid ? $pw.value : null;
+
+    // Don't send a request if fields are invalid.
+    if (!id) {
+      $("#loginError").html("Invalid username.");
+      return;
+    }
+    if (!pw) {
+      $("#loginError").html("Invalid password.");
+      return;
+    }
+
+    function clearForm($els) {
+      for (let $el of $els) {
+        $el.value = "";
+      }
+      // Also reset error.
+      $("#loginError").text("");
+    }
+
+    // Reset error message on input change
+    $('[name="loginId"]').on("keydown", () => {
+      $("#loginError").html("");
+    });
+
+    $('[name="loginPw"]').on("keydown", () => {
+      $("#loginError").html("");
+    });
+
+    // Use window object to have universal scope for the functions
+    window.handleLogin = handleLogin;
+  }
+</script>
+{% endblock %}

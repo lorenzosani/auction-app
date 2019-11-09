@@ -6,11 +6,16 @@ from django.db import IntegrityError
 from auctionapp.models import Member
 
 
-
+# --- Pages ----
 def signupPage(request):
-    template = loader.get_template('signup/signup.html')
+    template = loader.get_template('signup/index.html')
     return HttpResponse(template.render({}, request))
 
+def loginPage(request):
+    template = loader.get_template('login/index.html')
+    return HttpResponse(template.render({}, request))
+
+# ---- Requests ---- 
 def signupRequest(request):
     if 'email' in request.POST:
         email = request.POST['email']
