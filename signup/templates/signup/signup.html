@@ -13,6 +13,7 @@
   />
   <small class="form-text text-muted mb-4">
     Usernames may contain alphanumeric, _, @, +, . and -
+    <strong>(required)</strong>
   </small>
 
   <!-- Password -->
@@ -23,7 +24,15 @@
     placeholder="Password"
     minlength="8"
   />
-  <small class="form-text text-muted mb-4"> At least 8 characters </small>
+  <small class="form-text text-muted mb-4">
+    At least 8 characters <strong>(required)</strong>
+  </small>
+
+  <!-- Date of birth -->
+  <input type="date" class="form-control" name="dateOfBirth" min="1900-01-01" />
+  <small class="form-text text-muted mb-4">
+    Date of Birth <strong>(required)</strong>
+  </small>
 
   <!-- E-mail -->
   <input
@@ -32,8 +41,6 @@
     name="email"
     placeholder="Email"
   />
-
-  <!-- TODO Add Date of Birth input  -->
 
   <small id="registrationError" class="form-text mb-4 text-danger"></small>
 
@@ -91,13 +98,15 @@
     const $id = $.find('[name="username"]')[0];
     const $pw = $.find('[name="password"]')[0];
     const $email = $.find('[name="email"]')[0];
+    const $dateOfBirth = $.find('[name="dateOfBirth"]')[0];
 
     // Check validity of data
     const id = $id.validity.valid ? $id.value.toLowerCase() : null;
     const pw = $pw.validity.valid ? $pw.value : null;
     const email = $email.validity.valid ? $email.value.toLowerCase() : null;
+    const dateOfBirth = $dateOfBirth.validity.valid ? $dateOfBirth.value : null;
 
-    // Id and pw are required fields. Don't send the POST request
+    // Id, pw and dob are required fields. Don't send the POST request
     // if any of these are not valid.
     if (!id) {
       $("#registrationError").html("Invalid username.");
@@ -105,6 +114,11 @@
     }
     if (!pw) {
       $("#registrationError").html("Invalid password.");
+      return;
+    }
+    // TODO - Change DB to have date_of_birth field as required
+    if (!dateOfBirth) {
+      $("#registrationError").html("Invalid Date of Birth.");
       return;
     }
 
@@ -124,7 +138,7 @@
         xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
       },
       success: ({ username }) => {
-        clearForm([$id, $pw, $email]);
+        clearForm([$id, $pw, $email, $dateOfBirth]);
         // Open modal to tell users the registration was succesful
         $("#registrationSuccess").modal();
       },
@@ -150,6 +164,10 @@
     // Also reset error.
     $("#registrationError").text("");
   }
+
+  // Set maximum date of birth to today's date.
+  const today = new Date().toISOString().split("T")[0];
+  $.find('[name="dateOfBirth"]')[0].setAttribute("max", today);
 
   // Use window object to have universal scope for the functions
   window.handleRegister = handleRegister;

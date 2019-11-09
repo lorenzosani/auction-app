@@ -15,11 +15,14 @@ def signupRequest(request):
     if 'email' in request.POST:
         email = request.POST['email']
 
+    if 'dateOfBirth' in request.POST:
+        date_of_birth = request.POST['dateOfBirth']
+
     if 'username' in request.POST and 'password' in request.POST:
         username = request.POST['username']
         pw = request.POST['password']
 
-        user = Member(username=username, email=email)
+        user = Member(username=username, email=email, date_of_birth=date_of_birth)
         user.set_password(pw)
         
         try: user.save()
