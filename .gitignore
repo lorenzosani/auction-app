@@ -102,3 +102,9 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# VSCode
+.vscode
+
+# Mac's folder position useless files
+.DS_store
