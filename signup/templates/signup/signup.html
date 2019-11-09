@@ -1,13 +1,13 @@
 {% extends 'base.html' %} {% block content %}
 <!-- Form -->
-<form class="text-center border border-light p-5 forms">
+<form id="signupForm" class="text-center border border-light p-5 forms">
   <p class="h4 mb-4">Join oBey</p>
 
   <!-- Username -->
   <input
     type="text"
     class="form-control"
-    name="registerId"
+    name="username"
     pattern="^[a-zA-Z0-9_@+.-]*"
     placeholder="Username"
   />
@@ -19,7 +19,7 @@
   <input
     type="password"
     class="form-control"
-    name="registerPw"
+    name="password"
     placeholder="Password"
     minlength="8"
   />
@@ -29,9 +29,11 @@
   <input
     type="email"
     class="form-control mb-4"
-    name="registerEmail"
+    name="email"
     placeholder="Email"
   />
+
+  <!-- TODO Add Date of Birth input  -->
 
   <small id="registrationError" class="form-text mb-4 text-danger"></small>
 
@@ -51,13 +53,10 @@
 
 <script>
   // Collect data from inputs
-  // TODO - Wire this function to the backend
-  // I.e. have it add a User - at the moment does only
-  // client-side validation of the inputs.
   function handleRegister() {
-    const $id = $.find('[name="registerId"]')[0];
-    const $pw = $.find('[name="registerPw"]')[0];
-    const $email = $.find('[name="registerEmail"]')[0];
+    const $id = $.find('[name="username"]')[0];
+    const $pw = $.find('[name="password"]')[0];
+    const $email = $.find('[name="email"]')[0];
 
     // Check validity of data
     const id = $id.validity.valid ? $id.value.toLowerCase() : null;
@@ -68,14 +67,30 @@
     !id && $("#registrationError").html("Invalid username.");
     !pw && $("#registrationError").html("Invalid password.");
     !email && $("#registrationError").html("Invalid email.");
+
+    $.ajax({
+      url: "{% url 'registration' %}",
+      method: "POST",
+      data: $("#signupForm").serializeArray(),
+      beforeSend: xhr => {
+        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+      },
+      success: ({ username }) => {
+        // TODO - Notify the users on the outcome of the signup
+      },
+      error: error => {
+        // TODO: Improve quality of error shown to the users
+        $("#registrationError").text(`${JSON.stringify(error)}`);
+      }
+    });
   }
 
   // Reset error message on input change
-  $('[name="registerId"]').on("keydown", () => {
+  $('[name="username"]').on("keydown", () => {
     $("#registrationError").html("");
   });
 
-  $('[name="registerEmail"]').on("keydown", () => {
+  $('[name="email"]').on("keydown", () => {
     $("#registrationError").html("");
   });
 
