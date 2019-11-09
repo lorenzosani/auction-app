@@ -3,7 +3,7 @@ from django.http import HttpResponse, Http404, JsonResponse
 from django.template import loader
 from django.db import IntegrityError
 
-from signup.models import Member
+from auctionapp.models import Member
 
 
 
