@@ -55,7 +55,7 @@
   </button>
 
   <!-- TODO Add login page and redirect the Users there -->
-  <p>Already a member? <a href="#">Login</a></p>
+  <p>Already a member? <a href="{% url 'login page' %}">Login</a></p>
 </form>
 
 <!-- Modal -->
@@ -81,7 +81,7 @@
       </div>
       <div class="modal-body">
         <!-- TODO Redirect to login page once we have one -->
-        Click <a href="#">here</a> to login
+        Click <a href="{% url 'login page' %}">here</a> to login
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">
