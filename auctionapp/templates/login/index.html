@@ -1,6 +1,6 @@
 {% extends 'base.html' %} {% block content %}
 <!-- Default form login -->
-<form class="text-center border border-light p-5 forms">
+<form id="loginForm" class="text-center border border-light p-5 forms">
   <p class="h4 mb-4">Welcome back to oBey</p>
 
   <!-- Email -->
@@ -60,25 +60,41 @@
       return;
     }
 
-    function clearForm($els) {
-      for (let $el of $els) {
-        $el.value = "";
+    $.ajax({
+      url: "{% url 'login request' %}",
+      method: "POST",
+      data: $("#loginForm").serializeArray(),
+      beforeSend: xhr => {
+        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+      },
+      success: ({ username }) => {
+        clearForm([$id, $pw]);
+        // TODO - Redirect users to homepage or profile page
+      },
+      error: error => {
+        $("#loginError").text("Wrong username or password.");
       }
-      // Also reset error.
-      $("#loginError").text("");
-    }
-
-    // Reset error message on input change
-    $('[name="loginId"]').on("keydown", () => {
-      $("#loginError").html("");
     });
-
-    $('[name="loginPw"]').on("keydown", () => {
-      $("#loginError").html("");
-    });
-
-    // Use window object to have universal scope for the functions
-    window.handleLogin = handleLogin;
   }
+
+  function clearForm($els) {
+    for (let $el of $els) {
+      $el.value = "";
+    }
+    // Also reset error.
+    $("#loginError").text("");
+  }
+
+  // Reset error message on input change
+  $('[name="loginId"]').on("keydown", () => {
+    $("#loginError").html("");
+  });
+
+  $('[name="loginPw"]').on("keydown", () => {
+    $("#loginError").html("");
+  });
+
+  // Use window object to have universal scope for the functions
+  window.handleLogin = handleLogin;
 </script>
 {% endblock %}

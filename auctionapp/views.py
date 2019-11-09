@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, Http404, JsonResponse
 from django.template import loader
 from django.db import IntegrityError
+import datetime as D
 
 from auctionapp.models import Member
 
@@ -36,3 +37,36 @@ def signupRequest(request):
 
     else:
         raise Http404('Missing required POST data.')
+
+def loginRequest(request):
+    username = request.POST['loginId']
+    password = request.POST['loginPw']
+    
+    try: member = Member.objects.get(username=username)
+    except Member.DoesNotExist: raise Http404('User not found')
+    
+    if member.check_password(password):
+        # remember user in session variable
+        request.session['username'] = username
+        request.session['password'] = password
+        context = {
+            'username': username,
+            'loggedin': True
+        }
+        response = render(request, 'login/index.html', context)
+
+        now = D.datetime.utcnow()
+        # 1 week. d * h  * m  * s
+        max_age = 7 * 24 * 60 * 60
+        delta = now + D.timedelta(seconds=max_age)
+        format = "%a, %d-%b-%Y %H:%M:%S GMT"
+        expires = D.datetime.strftime(delta, format)
+        # Set a "last_login" cookie that expires in max_age
+        response.set_cookie('last_login', now, expires=expires)
+        return response
+
+    else:
+        # Vague error message to avoid giving away too much info
+        raise Http404('Wrong username or password.')
+
+# TODO Add isLoggedIn decorator to check if a user is logged in.
