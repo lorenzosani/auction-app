@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404, JsonResponse
 from django.template import loader
 from django.db import IntegrityError
@@ -17,6 +18,7 @@ def loginPage(request):
     template = loader.get_template('login/index.html')
     return HttpResponse(template.render({}, request))
 
+@login_required
 def profilePage(request, username):
     template = loader.get_template('user_profile/index.html')
     user_info = Member.objects.get(username=username)
@@ -55,7 +57,7 @@ def loginRequest(request):
             'username': username,
             'loggedin': True
         }
-        response = render(request, 'login/index.html', context)
+        response = JsonResponse(context)
         # TODO find a way of using Django to set up the last login
         now = D.datetime.utcnow()
         # 1 week. d * h  * m  * s
@@ -66,7 +68,6 @@ def loginRequest(request):
         # Set a "last_login" cookie that expires in max_age
         response.set_cookie('last_login', now, expires=expires)
         return response
-
     else:
         # Vague error message to avoid giving away too much info
         raise Http404('Wrong username or password.')
