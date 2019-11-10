@@ -17,9 +17,9 @@ def loginPage(request):
     template = loader.get_template('login/index.html')
     return HttpResponse(template.render({}, request))
 
-def profilePage(request, userId):
+def profilePage(request, username):
     template = loader.get_template('user_profile/index.html')
-    user_info = Member.objects.get(id=userId)
+    user_info = Member.objects.get(username=username)
     return HttpResponse(template.render({"userInfo": user_info}, request))
 
 # ---- Requests ---- 
