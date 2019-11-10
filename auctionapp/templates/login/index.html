@@ -67,9 +67,24 @@
       beforeSend: xhr => {
         xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
       },
-      success: ({ username }) => {
+      success: ({ username, loggedin }) => {
+        // Extra safety net. Should never happen unless malicious activity
+        if (!loggedin) {
+          throw new Error("Failed to authenticate.");
+        }
         clearForm([$id, $pw]);
-        // TODO - Redirect users to homepage or profile page
+        // If users try to visit a page that requires login,
+        // Django will append a 'next' query in the URL.
+        // If there's one, use it for the redirection.
+        const next = window.location.search.split("=").pop();
+        if (next) window.location = next;
+        // If users are logging in from the login page (without
+        // having been redirected to it - so without "next" in the URL),
+        // then need to use the response to redirect to the right place.
+        window.location = "{% url 'user profile page' 0 %}".replace(
+          "0",
+          username
+        );
       },
       error: error => {
         $("#loginError").text("Wrong username or password.");
