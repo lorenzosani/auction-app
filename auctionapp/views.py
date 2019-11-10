@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, Http404, JsonResponse
 from django.template import loader
 from django.db import IntegrityError
@@ -72,3 +72,8 @@ def loginRequest(request):
         raise Http404('Wrong username or password.')
 
 # TODO Add isLoggedIn decorator to check if a user is logged in.
+
+def logoutRequest(request):
+    logout(request)
+    # TODO Redirect to homepage when we have one
+    return loginPage(request)
