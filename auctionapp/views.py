@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth import authenticate, login
 from django.http import HttpResponse, Http404, JsonResponse
 from django.template import loader
 from django.db import IntegrityError
@@ -46,20 +47,16 @@ def signupRequest(request):
 def loginRequest(request):
     username = request.POST['loginId']
     password = request.POST['loginPw']
-    
-    try: member = Member.objects.get(username=username)
-    except Member.DoesNotExist: raise Http404('User not found')
-    
-    if member.check_password(password):
-        # remember user in session variable
-        request.session['username'] = username
-        request.session['password'] = password
+    user = authenticate(username=username, password=password)    
+    if user is not None:
+        # Login user
+        login(request, user)
         context = {
             'username': username,
             'loggedin': True
         }
         response = render(request, 'login/index.html', context)
-
+        # TODO find a way of using Django to set up the last login
         now = D.datetime.utcnow()
         # 1 week. d * h  * m  * s
         max_age = 7 * 24 * 60 * 60
