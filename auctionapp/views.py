@@ -6,7 +6,7 @@ from django.template import loader
 from django.db import IntegrityError
 import datetime as D
 
-from auctionapp.models import Member
+from auctionapp.models import Member, Item
 
 
 # --- Pages ----
