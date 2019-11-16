@@ -81,8 +81,6 @@ def loginRequest(request):
         # Vague error message to avoid giving away too much info
         raise Http404('Wrong username or password.')
 
-# TODO Add isLoggedIn decorator to check if a user is logged in.
-
 def logoutRequest(request):
     logout(request)
     # TODO Redirect to homepage when we have one
