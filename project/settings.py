@@ -128,3 +128,14 @@ INTERNAL_IPS = ['127.0.0.1']
 
 # Login redirection
 LOGIN_URL = '/login/'
+
+# Load environment variables
+from dotenv import load_dotenv
+load_dotenv()
+
+# STMP Config
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
