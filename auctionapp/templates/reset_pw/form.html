@@ -1,0 +1,12 @@
+{% extends 'form_base.html' %} {% block nested %}
+<h1>Whoops, forgot your password?</h1>
+<p>
+  Enter your email address below, and we'll email instructions for setting a new
+  one.
+</p>
+
+<form action="/forgot/" method="post">
+  {% csrf_token %} {{ form.as_p }}
+  <input type="submit" value="Send email" />
+</form>
+{% endblock %}

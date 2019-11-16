@@ -1,0 +1,13 @@
+{% extends 'form_base.html' %} {% block nested %} {% if validlink %}
+<h3>Change password</h3>
+<form method="post">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit">Change password</button>
+</form>
+{% else %}
+<p>
+  The password reset link was invalid, possibly because it has already been
+  used. Please request a new password reset. If it's not the first time you're
+  seeing this message, I think you might be stuck in the Matrix.
+</p>
+{% endif %} {% endblock %}

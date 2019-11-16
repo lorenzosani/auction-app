@@ -1,13 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.core.mail import send_mail
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404, JsonResponse
 from django.template import loader
 from django.db import IntegrityError
+from django.conf import settings
 import datetime as D
 
 from auctionapp.models import Member, Item
-
 
 # --- Pages ----
 def signupPage(request):
@@ -23,6 +24,14 @@ def profilePage(request, username):
     template = loader.get_template('user_profile/index.html')
     user_info = Member.objects.get(username=username)
     return HttpResponse(template.render({"userInfo": user_info}, request))
+
+def pwResetSentPage(request):
+    template = loader.get_template('reset_pw/done.html')
+    return HttpResponse(template.render({}, request))
+
+def pwResetCompletedPage(request):
+    template = loader.get_template('reset_pw/complete.html')
+    return HttpResponse(template.render({}, request))
 
 # ---- Requests ---- 
 def signupRequest(request):

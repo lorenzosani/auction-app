@@ -1,0 +1,17 @@
+{% autoescape off %}
+<pre>
+Hello, {{ user.get_username }} 
+
+If you're trying to reset your password click the link below:
+
+{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
+
+If clicking the link above doesn't work, please copy and paste the URL in a new browser
+window instead.
+
+If you didn't request a password change, either ignore this email or call the police.
+
+Sincerely,
+The {{ site_name }} Team
+</pre>
+{% endautoescape %}
