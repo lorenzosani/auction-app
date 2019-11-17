@@ -14,6 +14,25 @@ class Item(models.Model):
     description = models.CharField(max_length=500)
     image = models.ImageField(upload_to='item_images')
     end_time = models.DateTimeField()
+    bids = models.ManyToManyField(Member, through='Bid')
     def __str__(self):
         return "Item: {}".format(self.title)
+
+
+#A bid is a many-to-many relationship between Member and Item;
+#The intermediate class Bid stores all extra info needed.
+class Bid(models.Model):
+    bidder = models.ForeignKey(Member, on_delete = models.CASCADE)
+    item = models.ForeignKey(Item, on_delete = models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    time_placed = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return "{} -> {} (£{})".format(self.bidder.username, self.item.title, self.amount)
+    class Meta:
+        ordering = ['-amount']
+        get_latest_by = "-time_placed"
+
+
+
+
     
