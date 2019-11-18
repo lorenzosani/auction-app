@@ -9,6 +9,7 @@ from django.conf import settings
 import datetime as D
 
 from auctionapp.models import Member, Item
+from auctionapp.forms import NewItemForm
 
 # --- Pages ----
 def signupPage(request):
@@ -85,3 +86,23 @@ def logoutRequest(request):
     logout(request)
     # TODO Redirect to homepage when we have one
     return loginPage(request)
+
+@login_required
+def addNewItem(request):
+    if request.method == 'POST':
+        # Get form data and item image
+        f = NewItemForm(request.POST, request.FILES)
+        # Validate and format input
+        if f.is_valid():
+            form = f.cleaned_data
+            # Create new item and save in db
+            item = Item(title=form['title'], description=form['description'], image=form['image'], start_price=form['start_price'], end_time=form['end_time'])
+            item.save()
+            # TODO Redirect to item details page
+            return loginPage(request)
+        else:
+            return HttpResponse('The form is not valid')
+    else:
+        form = NewItemForm()
+        template = loader.get_template('new_item/index.html')
+        return HttpResponse(template.render({'form': form}, request))
