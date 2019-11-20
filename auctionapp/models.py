@@ -12,7 +12,7 @@ class Member(User):
 class Item(models.Model):
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=500)
-    image = models.ImageField(upload_to='item_images')
+    image = models.ImageField(upload_to='auctionapp/static/auctionapp/item_images')
     start_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     end_time = models.DateTimeField()
     bids = models.ManyToManyField(Member, through='Bid')

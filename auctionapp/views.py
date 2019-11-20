@@ -6,6 +6,7 @@ from django.http import HttpResponse, Http404, JsonResponse
 from django.template import loader
 from django.db import IntegrityError
 from django.conf import settings
+from PIL import Image
 import datetime as D
 
 from auctionapp.models import Member, Item
@@ -99,10 +100,18 @@ def addNewItem(request):
             item = Item(title=form['title'], description=form['description'], image=form['image'], start_price=form['start_price'], end_time=form['end_time'])
             item.save()
             # TODO Redirect to item details page
-            return loginPage(request)
+            return itemDetail(request, item.id)
         else:
             return HttpResponse('The form is not valid')
     else:
         form = NewItemForm()
         template = loader.get_template('new_item/index.html')
         return HttpResponse(template.render({'form': form}, request))
+
+
+def itemDetail(request, item_id):
+    item = Item.objects.get(id=item_id)
+    # Format the path to get item's image
+    image_path = str(item.image).split("/",2)[2]
+    template = loader.get_template('item_page/index.html')
+    return HttpResponse(template.render({ "item": item, "image": image_path }, request))

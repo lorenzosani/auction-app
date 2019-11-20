@@ -1,0 +1,23 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container">
+    <div class="row">
+        <h4 class="m-4 justify-content-center">Item details</h4>
+    </div>
+    <div class="row">
+        <!-- TODO Make it look prettier -->
+        <div class="col-lg">
+            {% load static %}
+            <img src="{% static image %}" alt="item" width="50%" class="mb-4"/>
+            <h4>{{item.title}}</h4>
+            {{ item.description }}
+            <br /><br />
+            End of auction: {{ item.end_time }} </br>
+            Current Price :
+            <!-- TODO Show highest bid or starting price if no bids -->
+        </div>
+    </div>
+    <div class="row">
+        <!-- TODO add button to allow users to bid on items -->
+    </div>
+</div>
+{% endblock %}
