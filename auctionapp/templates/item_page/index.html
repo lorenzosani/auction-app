@@ -1,23 +1,56 @@
 {% extends 'base.html' %} {% block content %}
 <div class="container">
-    <div class="row">
-        <h4 class="m-4 justify-content-center">Item details</h4>
-    </div>
+    <h4 class="my-4 justify-content-center">{{item.title}}</h4>
     <div class="row">
         <!-- TODO Make it look prettier -->
-        <div class="col-lg">
+        <div class="col-lg my-4">
+            {% if image %}
             {% load static %}
-            <img src="{% static image %}" alt="item" width="50%" class="mb-4"/>
-            <h4>{{item.title}}</h4>
+            <img src="{% static image %}" alt="item" width="50%" class="mb-4" />
+            {% endif %}
+            <br/>
             {{ item.description }}
             <br /><br />
             End of auction: {{ item.end_time }} </br>
-            Current Price :
-            <!-- TODO Show highest bid or starting price if no bids -->
+            Current Price : <span id="item_price">£{{ price }}</span>
         </div>
     </div>
-    <div class="row">
-        <!-- TODO add button to allow users to bid on items -->
-    </div>
 </div>
+<div class="container mt-4">
+    <label for="price">Wanna make an offer for this item?</label><br />
+    <input type="number" min="1" step="any" max="10000000" id="price" /><br />
+    <button onclick="placeBid()" class="mt-2 btn btn-primary">Place A Bid</button>
+    <p style="color:red;" id="message" class="pt-2"></p>
+</div>
+
+
+<script>
+    window.placeBid = () => {
+        const $price = $.find('[id="price"]')[0];
+        const price = $price.validity.valid ? $price.value : null;
+
+        if (!price) {
+            $("#message").text($price.validationMessage);
+            return;
+        }
+
+        data = 
+
+        $.ajax({
+            url: "/item/{{ item.id }}/bid",
+            method: "POST",
+            data: {"price": price},
+            beforeSend: xhr => {
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+            success: response => {
+                $("#item_price").text(`£${parseFloat(response['new_price']).toFixed(2)}`);
+                window.alert("Offer placed, fingers crossed you will get it!")
+            },
+            error: response => {
+                $("#message").text(response.responseJSON.error);
+            }
+        });
+    }
+</script>
 {% endblock %}

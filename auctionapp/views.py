@@ -2,14 +2,15 @@ from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, Http404, JsonResponse
+from django.http import HttpResponse, Http404, JsonResponse, HttpResponseRedirect
 from django.template import loader
 from django.db import IntegrityError
 from django.conf import settings
 from PIL import Image
+from decimal import Decimal
 import datetime as D
 
-from auctionapp.models import Member, Item
+from auctionapp.models import Member, Item, Bid
 from auctionapp.forms import NewItemForm
 
 # --- Pages ----
@@ -34,6 +35,15 @@ def pwResetSentPage(request):
 def pwResetCompletedPage(request):
     template = loader.get_template('reset_pw/complete.html')
     return HttpResponse(template.render({}, request))
+
+def itemDetail(request, item_id):
+    item = Item.objects.get(id=item_id)
+    # Format the path to get item's image
+    image_path = None
+    if item.image:
+        image_path = str(item.image).split("/",2)[2]
+    template = loader.get_template('item_page/index.html')
+    return HttpResponse(template.render({ "item": item, "image": image_path, "price": _get_current_price(item) }, request))
 
 # ---- Requests ---- 
 def signupRequest(request):
@@ -100,7 +110,7 @@ def addNewItem(request):
             item = Item(title=form['title'], description=form['description'], image=form['image'], start_price=form['start_price'], end_time=form['end_time'])
             item.save()
             # TODO Redirect to item details page
-            return itemDetail(request, item.id)
+            return HttpResponseRedirect('/item/{}'.format(item.id))
         else:
             return HttpResponse('The form is not valid')
     else:
@@ -108,10 +118,36 @@ def addNewItem(request):
         template = loader.get_template('new_item/index.html')
         return HttpResponse(template.render({'form': form}, request))
 
-
-def itemDetail(request, item_id):
+def makeBid(request, item_id):
+    # Check if user is logged in
+    if not request.user.is_authenticated:
+        response = JsonResponse({"error": "You must log in to place a bid"})
+        response.status_code = 403
+        return response  
+    user = Member.objects.get(username=request.user.username)
     item = Item.objects.get(id=item_id)
-    # Format the path to get item's image
-    image_path = str(item.image).split("/",2)[2]
-    template = loader.get_template('item_page/index.html')
-    return HttpResponse(template.render({ "item": item, "image": image_path }, request))
+    price = Decimal(request.POST['price'])
+    # Check if price of bid is valid
+    if price <= item.start_price or price<=_get_current_price(item):
+        response = JsonResponse({"error": "The bid must be higher than the current price"})
+        response.status_code = 403
+        return response
+    bid = Bid(bidder=user, item=item, amount=price)
+    bid.save()
+    data = { "new_price": bid.amount }
+    return JsonResponse(data)
+
+# ---- Helper methods ---- 
+def _get_current_price(item):
+    bids = Bid.objects.filter(item=item)
+    if bids.count() == 0:
+        return item.start_price
+    highest = None
+    for bid in bids:
+        if highest:
+            if bid.amount>highest.amount:
+                highest = bid
+        else:
+            highest = bid
+    return highest.amount
+        

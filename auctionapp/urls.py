@@ -15,4 +15,6 @@ urlpatterns = [
     path('forgot/sent', views.pwResetSentPage, name='forgot password sent'),
     path('forgot/completed', views.pwResetCompletedPage, name='password_reset_complete'),
     path('sell', views.addNewItem, name='add item'),
+    path('item/<item_id>', views.itemDetail, name="item detail"),
+    path('item/<item_id>/bid', views.makeBid, name="make bid")
 ]
