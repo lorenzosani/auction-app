@@ -45,6 +45,12 @@ def itemDetail(request, item_id):
     template = loader.get_template('item_page/index.html')
     return HttpResponse(template.render({ "item": item, "image": image_path, "price": _get_current_price(item) }, request))
 
+def itemsList(request):
+    items = Item.objects.all()
+    template = loader.get_template('items_list/index.html')
+    context = { "items": items }
+    return HttpResponse(template.render(context, request))
+
 # ---- Requests ---- 
 def signupRequest(request):
     if 'email' in request.POST:

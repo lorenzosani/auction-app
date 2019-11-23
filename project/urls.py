@@ -5,7 +5,6 @@ from django.contrib import admin
 from welcome.views import index, health
 
 urlpatterns = [
-    path('', index),
     path('health', health),
     path('admin/', admin.site.urls),
     path('', include('auctionapp.urls')),
