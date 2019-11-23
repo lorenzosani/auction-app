@@ -93,7 +93,6 @@ def loginRequest(request):
             'loggedin': True
         }
         response = JsonResponse(context)
-        # TODO find a way of using Django to set up the last login
         now = D.datetime.utcnow()
         # 1 week. d * h  * m  * s
         max_age = 7 * 24 * 60 * 60
@@ -109,8 +108,7 @@ def loginRequest(request):
 
 def logoutRequest(request):
     logout(request)
-    # TODO Redirect to homepage when we have one
-    return loginPage(request)
+    return redirect(itemsList)
 
 @login_required
 def addNewItem(request):
@@ -123,7 +121,6 @@ def addNewItem(request):
             # Create new item and save in db
             item = Item(title=form['title'], description=form['description'], image=form['image'], start_price=form['start_price'], end_time=form['end_time'])
             item.save()
-            # TODO Redirect to item details page
             return HttpResponseRedirect('/item/{}'.format(item.id))
         else:
             return HttpResponse('The form is not valid')
