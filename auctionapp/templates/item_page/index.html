@@ -37,7 +37,7 @@
         data = 
 
         $.ajax({
-            url: "/item/{{ item.id }}/bid",
+            url: "{% url 'make bid' item.id %}",
             method: "POST",
             data: {"price": price},
             beforeSend: xhr => {
