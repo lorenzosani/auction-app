@@ -9,6 +9,7 @@ from django.conf import settings
 from PIL import Image
 from decimal import Decimal
 import datetime as D
+from django.utils import timezone
 
 from auctionapp.models import Member, Item, Bid
 from auctionapp.forms import NewItemForm
@@ -46,7 +47,7 @@ def itemDetail(request, item_id):
     return HttpResponse(template.render({ "item": item, "image": image_path, "price": _get_current_price(item) }, request))
 
 def itemsList(request):
-    items = Item.objects.all()
+    items = Item.objects.filter(end_time__gt=timezone.now())
     template = loader.get_template('items_list/index.html')
     context = { "items": items }
     return HttpResponse(template.render(context, request))
