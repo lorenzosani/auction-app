@@ -1,7 +1,11 @@
-from django.urls import path
+from django.urls import path, include
 from django.contrib.auth import views as auth_views
 
 from . import views
+
+from rest_framework.routers import DefaultRouter
+router = DefaultRouter()
+router.register('active', views.ActiveAuctionsViewSet)
 
 urlpatterns = [
     path('signup/', views.signupPage, name='sign up page'),
@@ -17,5 +21,6 @@ urlpatterns = [
     path('sell', views.addNewItem, name='add item'),
     path('item/<item_id>', views.itemDetail, name="item detail"),
     path('item/<item_id>/bid', views.makeBid, name="make bid"),
-    path('', views.itemsList, name="items list")
+    path('', views.itemsList, name="items list"),
+    path('api/', include(router.urls)),
 ]

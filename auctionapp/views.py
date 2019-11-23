@@ -10,9 +10,13 @@ from PIL import Image
 from decimal import Decimal
 import datetime as D
 from django.utils import timezone
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from auctionapp.models import Member, Item, Bid
 from auctionapp.forms import NewItemForm
+from auctionapp.serializers import ActiveAuctionsSerializer
 
 # --- Pages ----
 def signupPage(request):
@@ -158,3 +162,23 @@ def _get_current_price(item):
             highest = bid
     return highest.amount
         
+# ---- API ----
+class ActiveAuctionsViewSet(viewsets.ModelViewSet):
+    queryset = Item.objects.filter(end_time__gt=timezone.now())
+    serializer_class = ActiveAuctionsSerializer
+ 
+    @action(detail=False)
+    def search(self, request):
+        _query = request.GET.get("q")
+        # If we defined a query, filter items
+        if _query is not None:
+            filtered_items = Item.objects.all().filter(title__icontains=_query)
+        # Otherwise return all items
+        else:
+            filtered_items = Item.objects.all().all()
+        page = self.paginate_queryset(filtered_items)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(filtered_items, many=True)
+        return Response(serializer.data)

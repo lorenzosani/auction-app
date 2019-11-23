@@ -13,9 +13,18 @@
 <div class="album py-5 bg-light">
   <div class="container">
     {% if items %}
+    <div class="form-group mb-4">
+      <input
+        id="searchbar"
+        placeholder="Search items"
+        class="form-control form-control-underlined"
+        onchange="handleSearch(this);"
+      />
+    </div>
+
     <div class="row">
       {% for item in items %}
-      <div class="col-md-4">
+      <div class="col-md-4" data-item_title="{{ item.title}}" data-type="item">
         <div class="card mb-4 box-shadow">
           <img
             class="card-img-top"
@@ -45,4 +54,35 @@
     {% endif %}
   </div>
 </div>
+<script>
+  // All items you can bid to.
+  const $allItems = $("[data-type='item']").toArray();
+
+  function handleSearch(el) {
+    $.ajax({
+      url: `/api/active/search/`,
+      method: "GET",
+      data: { q: el.value },
+      success: data => {
+        const allItems = data.map(item => item.title);
+
+        $allItems.forEach(item => {
+          const allItems = item.getAttribute("data-item_title");
+          // Hide/show items based on the result of the query.
+          if (!allItems.includes(itemName)) {
+            item.hidden = true;
+          } else {
+            item.hidden = false;
+          }
+        });
+      },
+      error: error => {
+        console.error(error);
+      }
+    });
+  }
+
+  // Use window object to have universal scope for the functions
+  window.handleRegister = handleSearch;
+</script>
 {% endblock %}
