@@ -1,0 +1,52 @@
+{% extends 'base.html' %} {% block content %}
+    <div class="container">
+
+{% for item in items %}
+        <div class="row p-2 m-2 border border-secondary">
+            <!-- TODO Make it look prettier overall-->
+            <div class="col-6">
+                <h4 class="my-4 justify-content-center">{{item.title}}</h4>
+            <!-- TODO add the image-->
+{#                {% if item.image %}#}
+{#                    {% image = str(item.image).split("/",2)[2] %}#}
+{#                    {% load static %}#}
+{#                    <img src="{% static image %}" alt="item" width="200px" class="mb-4" />#}
+{#                {% endif %}#}
+                <br/>
+                {{ item.description }}
+                <br /><br />
+                Auction ended: {{ item.end_time }} </br>
+
+                {% for bid in bids %}
+            <!-- TODO Fix the price -->
+                    {% if item == bid.item %}
+                        {% if item.start_price < bid.amaunt %}
+                            Final Price : <span id="item_price">£{{ bid.amount }}</span>
+                        {% endif %}
+                    {% else %}
+                        Final Price : <span id="item_price">£{{ item.start_price }}</span>
+                    {% endif %}
+
+
+                {% endfor %}
+
+            </div>
+            <div class="col-6 ">
+
+                {% for bid in bids  %}
+
+                        {% if item == bid.item %}
+                        <div class="row">
+                            Amount: {{ bid.amount }} <br>
+                            time: {{ bid.time_placed }}<br>
+                        </div>
+                        {% endif %}
+
+                {% endfor %}
+            </div>
+        </div>
+{% endfor %}
+    </div>
+
+
+{% endblock %}

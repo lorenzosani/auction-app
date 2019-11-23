@@ -13,14 +13,17 @@ import datetime as D
 from auctionapp.models import Member, Item, Bid
 from auctionapp.forms import NewItemForm
 
+
 # --- Pages ----
 def signupPage(request):
     template = loader.get_template('signup/index.html')
     return HttpResponse(template.render({}, request))
 
+
 def loginPage(request):
     template = loader.get_template('login/index.html')
     return HttpResponse(template.render({}, request))
+
 
 @login_required
 def profilePage(request, username):
@@ -28,13 +31,16 @@ def profilePage(request, username):
     user_info = Member.objects.get(username=username)
     return HttpResponse(template.render({"userInfo": user_info}, request))
 
+
 def pwResetSentPage(request):
     template = loader.get_template('reset_pw/done.html')
     return HttpResponse(template.render({}, request))
 
+
 def pwResetCompletedPage(request):
     template = loader.get_template('reset_pw/complete.html')
     return HttpResponse(template.render({}, request))
+
 
 def itemDetail(request, item_id):
     item = Item.objects.get(id=item_id)
@@ -44,6 +50,7 @@ def itemDetail(request, item_id):
         image_path = str(item.image).split("/",2)[2]
     template = loader.get_template('item_page/index.html')
     return HttpResponse(template.render({ "item": item, "image": image_path, "price": _get_current_price(item) }, request))
+
 
 # ---- Requests ---- 
 def signupRequest(request):
@@ -66,6 +73,7 @@ def signupRequest(request):
 
     else:
         raise Http404('Missing required POST data.')
+
 
 def loginRequest(request):
     username = request.POST['loginId']
@@ -93,10 +101,12 @@ def loginRequest(request):
         # Vague error message to avoid giving away too much info
         raise Http404('Wrong username or password.')
 
+
 def logoutRequest(request):
     logout(request)
     # TODO Redirect to homepage when we have one
     return loginPage(request)
+
 
 @login_required
 def addNewItem(request):
@@ -118,6 +128,7 @@ def addNewItem(request):
         template = loader.get_template('new_item/index.html')
         return HttpResponse(template.render({'form': form}, request))
 
+
 def makeBid(request, item_id):
     # Check if user is logged in
     if not request.user.is_authenticated:
@@ -137,6 +148,7 @@ def makeBid(request, item_id):
     data = { "new_price": bid.amount }
     return JsonResponse(data)
 
+
 # ---- Helper methods ---- 
 def _get_current_price(item):
     bids = Bid.objects.filter(item=item)
@@ -150,4 +162,14 @@ def _get_current_price(item):
         else:
             highest = bid
     return highest.amount
-        
+
+
+#closed bids gets all items and all bids and puts it in the bid_Closed index.hmtl
+# TODO need to add all users to diferenciate the bit
+def bid_Closed(request):
+    bids = Bid.objects.all()
+    items = Item.objects.all()
+    template = loader.get_template('bid_Closed/index.html')
+    return HttpResponse(template.render({
+        "bids": bids,
+        "items": items }, request))
