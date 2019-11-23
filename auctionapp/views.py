@@ -52,6 +52,9 @@ def itemDetail(request, item_id):
 
 def itemsList(request):
     items = Item.objects.filter(end_time__gt=timezone.now())
+    for item in items:
+        if item.image:
+            item.image = str(item.image).split("/",2)[2]
     template = loader.get_template('items_list/index.html')
     context = { "items": items }
     return HttpResponse(template.render(context, request))
