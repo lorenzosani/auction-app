@@ -17,10 +17,16 @@
     </div>
 </div>
 <div class="container mt-4">
+    {% if closed and buyer %}
+    <p>The auction for this item is closed now.<br/>This was bought by <b>{{ buyer }}</b> for £{{ price }}</p>
+    {% elif closed %}
+    <p>This auction has expired. <br/> No bid was made on this item.</p>
+    {% else %}
     <label for="price">Wanna make an offer for this item?</label><br />
     <input type="number" min="1" step="any" max="10000000" id="price" /><br />
     <button onclick="placeBid()" class="mt-2 btn btn-primary">Place A Bid</button>
     <p style="color:red;" id="message" class="pt-2"></p>
+    {% endif %}
 </div>
 
 
@@ -33,8 +39,6 @@
             $("#message").text($price.validationMessage);
             return;
         }
-
-        data = 
 
         $.ajax({
             url: "{% url 'make bid' item.id %}",

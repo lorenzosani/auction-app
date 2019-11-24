@@ -44,12 +44,24 @@ def pwResetCompletedPage(request):
 
 def itemDetail(request, item_id):
     item = Item.objects.get(id=item_id)
+    # Get buyer
+    try:
+        bidsList = list(item.bid_set.all())
+        buyer = str(bidsList[0].bidder).split(' ')[1]
+    except:
+        buyer = None
+    data = { 
+        "item": item,
+        "image": None,
+        "closed": item.end_time < timezone.now(),
+        "price": _get_current_price(item),
+        "buyer": buyer,
+    }
     # Format the path to get item's image
-    image_path = None
     if item.image:
-        image_path = str(item.image).split("/",2)[2]
+        data["image"] = str(item.image).split("/",2)[2]
     template = loader.get_template('item_page/index.html')
-    return HttpResponse(template.render({ "item": item, "image": image_path, "price": _get_current_price(item) }, request))
+    return HttpResponse(template.render(data, request))
 
 def itemsList(request):
     items = Item.objects.filter(end_time__gt=timezone.now())
