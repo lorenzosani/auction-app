@@ -30,6 +30,9 @@ def loginPage(request):
 
 @login_required
 def profilePage(request, username):
+    logged_user = request.user.username
+    if logged_user != username:
+        raise Http404('Not your profile, sorry.')
     template = loader.get_template('user_profile/index.html')
     user_info = Member.objects.get(username=username)
     user_bids = Bid.objects.filter(bidder=user_info)
