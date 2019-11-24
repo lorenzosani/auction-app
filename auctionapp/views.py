@@ -65,22 +65,16 @@ def itemDetail(request, item_id):
         buyer = None
     data = { 
         "item": item,
-        "image": None,
+        "image": item.image,
         "closed": item.end_time < timezone.now(),
         "price": _get_current_price(item),
         "buyer": buyer,
     }
-    # Format the path to get item's image
-    if item.image:
-        data["image"] = str(item.image).split("/",2)[2]
     template = loader.get_template('item_page/index.html')
     return HttpResponse(template.render(data, request))
 
 def itemsList(request):
     items = Item.objects.filter(end_time__gt=timezone.now())
-    for item in items:
-        if item.image:
-            item.image = str(item.image).split("/",2)[2]
     template = loader.get_template('items_list/index.html')
     context = { "items": items }
     return HttpResponse(template.render(context, request))
@@ -90,9 +84,6 @@ def closedItems(request):
     closed_items = Item.objects.filter(end_time__lt=timezone.now())
     bidsByItem = {}
     for item in closed_items:
-        # Fix image path
-        if item.image:
-            item.image = str(item.image).split("/",2)[2]
         # Build the dictionary
         if str(item.id) not in bidsByItem:
             bidsByItem[str(item.id)] = {}

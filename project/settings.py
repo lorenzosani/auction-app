@@ -141,3 +141,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = 'oBey Team <noreply@obey.com>'
+
+# User uploaded pictures
+MEDIA_ROOT = os.path.join(SETTINGS_PATH, 'media')
+MEDIA_URL = '/media/'
