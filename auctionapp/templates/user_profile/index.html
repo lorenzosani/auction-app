@@ -29,7 +29,9 @@
         {% endif %}
       </div>
       <div>
-        <a href="{% url 'add item' %}" class="btn btn-outline-secondary">Sell an Item</a>
+        <a href="{% url 'add item' %}" class="btn btn-outline-secondary"
+          >Sell an Item</a
+        >
       </div>
     </div>
     <div class="col-6">
@@ -37,14 +39,36 @@
       <div>
         <ul>
           {% for bid in bids|slice:":10" %}
-          <li><b><a href="{% url 'item detail' bid.item.id %}">{{ bid }}</a></b> on {{ bid.time_placed }}</li>
+          <li>
+            <b><a href="{% url 'item detail' bid.item.id %}">{{ bid }}</a></b>
+            on {{ bid.time_placed }}
+          </li>
           {% empty %}
           <p>You didn't make any bid yet.</p>
-          <a href="{% url 'items list' %}" class="btn btn-outline-secondary">Check out what's on auction</a>
+          <a href="{% url 'items list' %}" class="btn btn-outline-secondary"
+            >Check out what's on auction</a
+          >
           {% endfor %}
         </ul>
       </div>
     </div>
+    {% if bidsWon %}
+    <div class="row">
+      <div class="col-12">
+        <h4 class="pb-3 font-weight-bold">Today you won these auctions!</h4>
+        <div>
+          <ul>
+            {% for bid in bidsWon %}
+            <li>
+              <b><a href="{% url 'item detail' bid.item.id %}">{{ bid }}</a></b>
+              on {{ bid.time_placed }}
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
+  {% endif %}
 </div>
 {% endblock %}

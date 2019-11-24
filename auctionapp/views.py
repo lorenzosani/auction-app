@@ -33,7 +33,15 @@ def profilePage(request, username):
     template = loader.get_template('user_profile/index.html')
     user_info = Member.objects.get(username=username)
     user_bids = Bid.objects.filter(bidder=user_info)
-    return HttpResponse(template.render({"userInfo": user_info, "bids": user_bids}, request))
+    # Get auctions won in the past 24 hours
+    items_ended_today = Item.objects.filter(end_time__lt=timezone.now(), end_time__gt=timezone.now() - D.timedelta(1))
+    bids_won_today = []
+    for item in items_ended_today:
+      winning_bid = item.bid_set.first()
+      winner = winning_bid.bidder
+      if username == winner.username:
+          bids_won_today.append(winning_bid)
+    return HttpResponse(template.render({"userInfo": user_info, "bids": user_bids, "bidsWon": bids_won_today}, request))
 
 def pwResetSentPage(request):
     template = loader.get_template('reset_pw/done.html')
