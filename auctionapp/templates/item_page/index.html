@@ -1,34 +1,51 @@
-{% extends 'base.html' %} {% block content %}
-<div class="container">
-    <h4 class="my-4 justify-content-center">{{item.title}}</h4>
-    <div class="row">
-        <!-- TODO Make it look prettier -->
-        <div class="col-lg my-4">
+{% extends 'base.html' %} {% block content %} {% load static %}
+<style>
+    .center-layout {
+        max-width: 1000px;
+        margin: auto;
+    }
+</style>
+
+<section class="jumbotron text-center">
+    <h1 class="jumbotron-heading">{{ item.title }}</h1>
+</section>
+<div class="album p-5 bg-light">
+    <div class="row center-layout">
+        <div class="col-6 p-5">
             {% if image %}
-            {% load static %}
-            <img src="{% static image %}" alt="item" width="50%" class="mb-4" />
+            <img class="card-img-top" src="/static/{{ image }}" alt="Item image" />
+            {% else %}
+            <img class="card-img-top" src="{% static 'auctionapp/no_image.jpg' %}" alt="Item image" />
             {% endif %}
-            <br/>
-            {{ item.description }}
-            <br /><br />
-            End of auction: {{ item.end_time }} </br>
-            Current Price : <span id="item_price">£{{ price }}</span>
+        </div>
+        <div class="col-6 p-5">
+            <h4>Current Price : <b><span id="item_price">£{{ price }}</span></b></h4>
+            <p class="text-muted mb-0">Highest bidder:
+                {% if buyer %}
+                <span id="buyer">{{ buyer }}</span>
+                {% else %}
+                <span id="buyer">No bids yet</span>
+            </p>
+            {% endif %}
+            <p class="text-muted">End of auction: {{ item.end_time }}</p>
+            <br />
+            <p>Description:<br /><span class="text-muted">{{ item.description }}</span></p>
+            <div class="container m-0 p-0 pt-5">
+                {% if closed and buyer %}
+                <p>The auction for this item is closed now.<br />This was bought by <b>{{ buyer }}</b> for £{{ price }}
+                </p>
+                {% elif closed %}
+                <p>This auction has expired. <br /> No bid was made on this item.</p>
+                {% else %}
+                <label for="price">Wanna make a bid on this item?</label><br />
+                <input type="number" class="form-control" min="1" step="any" max="10000000" id="price" /><br />
+                <button onclick="placeBid()" class="btn btn-secondary">Place A Bid</button>
+                <p style="color:red;" id="message" class="pt-2"></p>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
-<div class="container mt-4">
-    {% if closed and buyer %}
-    <p>The auction for this item is closed now.<br/>This was bought by <b>{{ buyer }}</b> for £{{ price }}</p>
-    {% elif closed %}
-    <p>This auction has expired. <br/> No bid was made on this item.</p>
-    {% else %}
-    <label for="price">Wanna make an offer for this item?</label><br />
-    <input type="number" min="1" step="any" max="10000000" id="price" /><br />
-    <button onclick="placeBid()" class="mt-2 btn btn-primary">Place A Bid</button>
-    <p style="color:red;" id="message" class="pt-2"></p>
-    {% endif %}
-</div>
-
 
 <script>
     window.placeBid = () => {
@@ -43,12 +60,13 @@
         $.ajax({
             url: "{% url 'make bid' item.id %}",
             method: "POST",
-            data: {"price": price},
+            data: { "price": price },
             beforeSend: xhr => {
                 xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
             },
             success: response => {
                 $("#item_price").text(`£${parseFloat(response['new_price']).toFixed(2)}`);
+                $("#buyer").text(response['buyer'])
                 window.alert("Offer placed, fingers crossed you will get it!")
             },
             error: response => {

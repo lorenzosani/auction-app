@@ -174,7 +174,7 @@ def makeBid(request, item_id):
         return response
     bid = Bid(bidder=user, item=item, amount=price)
     bid.save()
-    data = { "new_price": bid.amount }
+    data = { "new_price": bid.amount, "buyer": str(bid.bidder).split(" ")[1] }
     return JsonResponse(data)
 
 # ---- Helper methods ---- 
