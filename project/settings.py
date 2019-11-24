@@ -143,5 +143,5 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = 'oBey Team <noreply@obey.com>'
 
 # User uploaded pictures
-MEDIA_ROOT = os.path.join(SETTINGS_PATH, 'media')
+MEDIA_ROOT = os.path.join(os.environ.get('OPENSHIFT_DATA_DIR', ''), 'media')
 MEDIA_URL = '/media/'
