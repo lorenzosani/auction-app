@@ -7,6 +7,10 @@
       of items that our users are trying to sell to get enough money to buy
       bread. If you also want to start buying/selling please register.
     </p>
+    <div class="container text-center">
+      <a class="btn btn-outline-secondary mt-4 mx-1" href="{% url 'closed items' %}">See Closed Auctions</a>
+      <a class="btn btn-outline-secondary mt-4 mx-1" href="{% url 'add item' %}">Sell an Item</a>
+    </div>
   </div>
 </section>
 
@@ -61,9 +65,6 @@
     {% else %}
     <h5 class="d-flex">Sorry, there are no active auctions at the moment.</h5>
     {% endif %}
-  </div>
-  <div class="container text-center">
-    <a class="btn btn-outline-secondary mt-4" href="{% url 'closed items' %}">See closed auctions</a>
   </div>
 </div>
 <script>
