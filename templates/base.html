@@ -55,6 +55,11 @@
         <ul class="navbar-nav">
           {% if user.is_authenticated %}
           <li class="nav-item ">
+            <a class="nav-link" href="{% url 'user profile page' user.username %}"
+              >Profile<span class="sr-only"></span
+            ></a>
+          </li>
+          <li class="nav-item ">
             <a class="nav-link" href="{% url 'closed items' %}"
               >Closed Auctions<span class="sr-only"></span
             ></a>
