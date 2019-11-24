@@ -41,9 +41,10 @@ def profilePage(request, username):
     bids_won_today = []
     for item in items_ended_today:
       winning_bid = item.bid_set.first()
-      winner = winning_bid.bidder
-      if username == winner.username:
-          bids_won_today.append(winning_bid)
+      if winning_bid:
+        winner = winning_bid.bidder
+        if username == winner.username:
+            bids_won_today.append(winning_bid)
     return HttpResponse(template.render({"userInfo": user_info, "bids": user_bids, "bidsWon": bids_won_today}, request))
 
 def pwResetSentPage(request):

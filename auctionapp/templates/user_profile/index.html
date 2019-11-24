@@ -17,9 +17,9 @@
 
 <div class="album p-5 bg-light">
   <div class="row center-layout">
-    <div class="col-6">
+    <div class="col-sm-6 mb-5">
       <h4 class="pb-3 font-weight-bold">User information</h4>
-      <div class="user-info mb-5">
+      <div class="user-info mb-4">
         <p><b>Name:</b> {{userInfo.username}}</p>
         <p><b>Birthday:</b> {{ userInfo.date_of_birth | date:"M d, Y" }}</p>
         {% if userInfo.email %}
@@ -34,7 +34,7 @@
         >
       </div>
     </div>
-    <div class="col-6">
+    <div class="col-sm-6">
       <h4 class="pb-3 font-weight-bold">Your latest bids</h4>
       <div>
         <ul>

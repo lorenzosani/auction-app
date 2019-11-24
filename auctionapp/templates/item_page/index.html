@@ -11,14 +11,14 @@
 </section>
 <div class="album p-5 bg-light">
     <div class="row center-layout">
-        <div class="col-6 p-5">
+        <div class="col-sm-6 p-5">
             {% if image %}
             <img class="card-img-top" src="/static/{{ image }}" alt="Item image" />
             {% else %}
             <img class="card-img-top" src="{% static 'auctionapp/no_image.jpg' %}" alt="Item image" />
             {% endif %}
         </div>
-        <div class="col-6 p-5">
+        <div class="col-sm-6 p-5">
             <h4>Current Price : <b><span id="item_price">£{{ price }}</span></b></h4>
             <p class="text-muted mb-0">Highest bidder:
                 {% if buyer %}
