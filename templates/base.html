@@ -49,10 +49,10 @@
       </button>
 
       <div
-        class="collapse navbar-collapse d-flex  justify-content-end"
+        class="collapse navbar-collapse justify-content-end"
         id="navbarSupportedContent"
       >
-        <ul class="navbar-nav">
+        <ul class="navbar-nav float-right">
           {% if user.is_authenticated %}
           <li class="nav-item ">
             <a class="nav-link" href="{% url 'user profile page' user.username %}"
