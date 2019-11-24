@@ -32,7 +32,8 @@ def loginPage(request):
 def profilePage(request, username):
     template = loader.get_template('user_profile/index.html')
     user_info = Member.objects.get(username=username)
-    return HttpResponse(template.render({"userInfo": user_info}, request))
+    user_bids = Bid.objects.filter(bidder=user_info)
+    return HttpResponse(template.render({"userInfo": user_info, "bids": user_bids}, request))
 
 def pwResetSentPage(request):
     template = loader.get_template('reset_pw/done.html')
