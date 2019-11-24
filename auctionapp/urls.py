@@ -21,6 +21,7 @@ urlpatterns = [
     path('sell', views.addNewItem, name='add item'),
     path('item/<item_id>', views.itemDetail, name="item detail"),
     path('item/<item_id>/bid', views.makeBid, name="make bid"),
+    path('closed', views.closedItems, name='closed items'),
     path('', views.itemsList, name="items list"),
     path('api/', include(router.urls)),
 ]

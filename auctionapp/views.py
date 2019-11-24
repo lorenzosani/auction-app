@@ -13,6 +13,7 @@ from django.utils import timezone
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.template.defaulttags import register
 
 from auctionapp.models import Member, Item, Bid
 from auctionapp.forms import NewItemForm
@@ -57,6 +58,22 @@ def itemsList(request):
             item.image = str(item.image).split("/",2)[2]
     template = loader.get_template('items_list/index.html')
     context = { "items": items }
+    return HttpResponse(template.render(context, request))
+
+@login_required
+def closedItems(request):
+    closed_items = Item.objects.filter(end_time__lt=timezone.now())
+    bidsByItem = {}
+    for item in closed_items:
+        # Fix image path
+        if item.image:
+            item.image = str(item.image).split("/",2)[2]
+        # Build the dictionary
+        if str(item.id) not in bidsByItem:
+            bidsByItem[str(item.id)] = {}
+        bidsByItem[str(item.id)] = list(item.bid_set.all())
+    template = loader.get_template('closed_items/index.html')
+    context = { "items": closed_items, "bidsByItem": bidsByItem }
     return HttpResponse(template.render(context, request))
 
 # ---- Requests ---- 
@@ -182,3 +199,8 @@ class ActiveAuctionsViewSet(viewsets.ModelViewSet):
             return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(filtered_items, many=True)
         return Response(serializer.data)
+
+# ---- Template filters ----
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(str(key))

@@ -1,0 +1,50 @@
+{% extends 'base.html' %} {% block content %}{% load static %}
+<h1 class="jumbotron-heading text-center m-4">Closed Auctions</h1>
+<div class="album py-5 bg-light">
+  <div class="container">
+    {% if items %}
+    <div class="row">
+      {% for item in items %}
+      <div class="col-md-4" data-item_title="{{ item.title }}" data-type="item">
+        <div class="card mb-4 box-shadow">
+          {% if item.image %}
+          <!-- TODO test picture in production -->
+          <img
+            class="card-img-top"
+            src="/static/{{ item.image }}"
+            alt="Item image"
+          />
+          {% else %}
+          <img
+            class="card-img-top"
+            src="{% static 'auctionapp/no_image.jpg' %}"
+            alt="Item image"
+          />
+          {% endif %}
+          <div class="card-body">
+            <p class="card-text">{{item.title}}</p>
+            {% if bidsByItem|get_item:item.id %} List of Bids:
+            <ul>
+              {% for bid in bidsByItem|get_item:item.id %}
+              <li>{{ bid }}</li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <p>Nobody placed a bid.</p>
+            {% endif %}
+            <div class="d-flex justify-content-between align-items-center">
+              <small class="text-muted"
+                >Ended {{ item.end_time| date:"M d"}}</small
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <h5 class="d-flex">Sorry, there are no closed auctions at the moment.</h5>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
