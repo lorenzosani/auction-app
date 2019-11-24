@@ -203,9 +203,12 @@ class ActiveAuctionsViewSet(viewsets.ModelViewSet):
         # If we defined a query, filter items
         if _query is not None:
             filtered_items = Item.objects.all().filter(title__icontains=_query)
+            filtered_desc = Item.objects.all().filter(description__icontains=_query)
+            # Concatenate both results.
+            filtered_items = list(filtered_items) + list(filtered_desc)
         # Otherwise return all items
         else:
-            filtered_items = Item.objects.all().all()
+            filtered_items = Item.objects.all()
         page = self.paginate_queryset(filtered_items)
         if page is not None:
             serializer = self.get_serializer(page, many=True)

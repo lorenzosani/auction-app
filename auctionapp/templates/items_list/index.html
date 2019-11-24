@@ -8,8 +8,14 @@
       bread. If you also want to start buying/selling please register.
     </p>
     <div class="container text-center">
-      <a class="btn btn-outline-secondary mt-4 mx-1" href="{% url 'closed items' %}">See Closed Auctions</a>
-      <a class="btn btn-outline-secondary mt-4 mx-1" href="{% url 'add item' %}">Sell an Item</a>
+      <a
+        class="btn btn-outline-secondary mt-4 mx-1"
+        href="{% url 'closed items' %}"
+        >See Closed Auctions</a
+      >
+      <a class="btn btn-outline-secondary mt-4 mx-1" href="{% url 'add item' %}"
+        >Sell an Item</a
+      >
     </div>
   </div>
 </section>
@@ -28,7 +34,12 @@
 
     <div class="row">
       {% for item in items %}
-      <div class="col-md-4" data-item_title="{{ item.title}}" data-type="item">
+      <div
+        class="col-md-4"
+        data-item_title="{{ item.title }}"
+        data-item_desc="{{ item.description }}"
+        data-type="item"
+      >
         <div class="card mb-4 box-shadow">
           {% if item.image %}
           <!-- TODO test picture in production -->
@@ -45,7 +56,8 @@
           />
           {% endif %}
           <div class="card-body">
-            <p class="card-text">{{item.title}}</p>
+            <p class="card-text">{{ item.title }}</p>
+            <p class="text-muted">{{ item.description }}</p>
             <div class="d-flex justify-content-between align-items-center">
               <a
                 href="{% url 'item detail' item.id %}"
@@ -78,11 +90,17 @@
       data: { q: el.value },
       success: data => {
         const itemsMatchingQuery = data.map(item => item.title);
+        const descMatchingQuery = data.map(item => item.description);
 
         $allItems.forEach(item => {
           const itemName = item.getAttribute("data-item_title");
+          const itemDesc = item.getAttribute("data-item_desc");
           // Hide/show items based on the result of the query.
-          if (!itemsMatchingQuery.includes(itemName)) {
+          const queryNotMatches = !(
+            itemsMatchingQuery.includes(itemName) ||
+            descMatchingQuery.includes(itemDesc)
+          );
+          if (queryNotMatches) {
             item.hidden = true;
           } else {
             item.hidden = false;
