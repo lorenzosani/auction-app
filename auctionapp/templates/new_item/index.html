@@ -1,14 +1,14 @@
 {% extends 'form_base.html' %} {% block nested %}
+<section class="jumbotron text-center p-5">
+    <h1 class="jumbotron-heading">Sell something on oBey</h1>
+    <p class="text-muted">Please insert the details of an item you wish to sell.</p>
+</section>
+
 <div class="container">
-    <div class="container">
-        <h4>Sell something on oBey</h4>
-        <p>Please insert the details of an item you wish to sell.</p>
-    </div>
-    <form action="{% url 'add item' %}" enctype="multipart/form-data" method="post">
-        <!-- TODO make form look prettier -->
+    <form  action="{% url 'add item' %}" enctype="multipart/form-data" method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="Sell this item!" class="btn btn-primary my-4">
+        <input type="submit" value="Sell this item!" class="btn btn-secondary my-4">
     </form>
 </div>
 {% endblock %}
