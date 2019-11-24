@@ -73,12 +73,12 @@
       method: "GET",
       data: { q: el.value },
       success: data => {
-        const allItems = data.map(item => item.title);
+        const itemsMatchingQuery = data.map(item => item.title);
 
         $allItems.forEach(item => {
-          const allItems = item.getAttribute("data-item_title");
+          const itemName = item.getAttribute("data-item_title");
           // Hide/show items based on the result of the query.
-          if (!allItems.includes(itemName)) {
+          if (!itemsMatchingQuery.includes(itemName)) {
             item.hidden = true;
           } else {
             item.hidden = false;
